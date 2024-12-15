@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/signal"
 	"time"
+	"users/repository"
 
 	"github.com/go-playground/validator"
 	"github.com/jackc/pgx/v5"
@@ -20,6 +21,7 @@ type Server struct {
 	DB         *pgx.Conn
 	Logger     *slog.Logger
 	Cfg        *Config
+	Ctx        context.Context
 	ShutdownCh chan os.Signal
 	Server     *http.Server
 }
@@ -45,6 +47,7 @@ func NewServer() (*Server, error) {
 		Logger:     logger,
 		DB:         conn,
 		Cfg:        cfg,
+		Ctx:        ctx,
 		ShutdownCh: make(chan os.Signal, 1),
 	}
 	signal.Notify(server.ShutdownCh, os.Interrupt)
@@ -116,10 +119,19 @@ func (s *Server) SetupRouter() {
 	}))
 	s.Echo.Validator = &CustomValidator{Validator: validator.New()}
 
-	s.Echo.GET("/health", func(c echo.Context) error {
-		res := NewResponse("success", "healthy", nil, http.StatusOK)
-		return c.JSON(res.Code, res)
+	users := s.Echo.Group("/v1/auth")
+	users.GET("/health", func(c echo.Context) error {
+		return NewResponse(c, "success", "healthy", "", http.StatusOK)
 	})
+
+	auth := AuthHandler{
+		DB:     s.DB,
+		Repo:   repository.New(s.DB),
+		Logger: s.Logger,
+		Cfg:    s.Cfg,
+		Ctx:    s.Ctx,
+	}
+	users.POST("/permissions", auth.LoadPermissions)
 }
 
 func Cors() middleware.CORSConfig {

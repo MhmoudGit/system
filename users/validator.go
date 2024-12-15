@@ -16,8 +16,11 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 	if err := cv.Validator.Struct(i); err != nil {
 		errors := make(map[string]string)
 
-		for _, err := range err.(validator.ValidationErrors) {
-			errors[err.Field()] = getErrorMessage(err)
+		fieldErrors, Ok := err.(validator.ValidationErrors)
+		if Ok {
+			for _, err := range fieldErrors {
+				errors[err.Field()] = getErrorMessage(err)
+			}
 		}
 
 		return echo.NewHTTPError(http.StatusUnprocessableEntity, errors)
