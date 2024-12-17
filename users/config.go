@@ -8,12 +8,15 @@ import (
 )
 
 type Config struct {
-	AppAddr    string
-	DbHost     string
-	DbPort     string
-	DbUser     string
-	DbPassword string
-	DbName     string
+	AppAddr       string
+	DbHost        string
+	DbPort        string
+	DbUser        string
+	DbPassword    string
+	DbName        string
+	JWTSecret     string
+	EmailFrom     string
+	EmailPassword string
 }
 
 func LoadConfig() *Config {
@@ -24,12 +27,15 @@ func LoadConfig() *Config {
 	}
 
 	return &Config{
-		AppAddr:    appAddr,
-		DbHost:     os.Getenv("DB_HOST"),
-		DbPort:     os.Getenv("DB_PORT"),
-		DbUser:     os.Getenv("DB_USER"),
-		DbPassword: os.Getenv("DB_PASSWORD"),
-		DbName:     os.Getenv("DB_NAME"),
+		AppAddr:       appAddr,
+		DbHost:        os.Getenv("DB_HOST"),
+		DbPort:        os.Getenv("DB_PORT"),
+		DbUser:        os.Getenv("DB_USER"),
+		DbPassword:    os.Getenv("DB_PASSWORD"),
+		DbName:        os.Getenv("DB_NAME"),
+		JWTSecret:     os.Getenv("JWT_SECRET"),
+		EmailFrom:     os.Getenv("EMAIL_FROM"),
+		EmailPassword: os.Getenv("EMAIL_PASSWORD"),
 	}
 }
 

@@ -92,11 +92,11 @@ func (q *Queries) CreateRole(ctx context.Context, arg CreateRoleParams) (Role, e
 
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (
-  username, email, password, first_name, last_name, phone_number, is_active, role
+  username, email, password, first_name, last_name, phone_number, is_active, is_verified, role
 ) VALUES (
-  $1, $2, $3, $4, $5, $6, $7, $8
+  $1, $2, $3, $4, $5, $6, $7, $8, $9
 )
-RETURNING id, username, email, password, first_name, last_name, phone_number, is_active, role, created_at, updated_at, deleted_at
+RETURNING id, username, email, password, first_name, last_name, phone_number, is_active, is_verified, role, created_at, updated_at, deleted_at
 `
 
 type CreateUserParams struct {
@@ -107,6 +107,7 @@ type CreateUserParams struct {
 	LastName    pgtype.Text `json:"last_name"`
 	PhoneNumber pgtype.Text `json:"phone_number"`
 	IsActive    pgtype.Bool `json:"is_active"`
+	IsVerified  pgtype.Bool `json:"is_verified"`
 	Role        int64       `json:"role"`
 }
 
@@ -119,6 +120,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		arg.LastName,
 		arg.PhoneNumber,
 		arg.IsActive,
+		arg.IsVerified,
 		arg.Role,
 	)
 	var i User
@@ -131,6 +133,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.LastName,
 		&i.PhoneNumber,
 		&i.IsActive,
+		&i.IsVerified,
 		&i.Role,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -195,7 +198,7 @@ func (q *Queries) GetRole(ctx context.Context, id int32) (Role, error) {
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, username, email, password, first_name, last_name, phone_number, is_active, role, created_at, updated_at, deleted_at FROM users
+SELECT id, username, email, password, first_name, last_name, phone_number, is_active, is_verified, role, created_at, updated_at, deleted_at FROM users
 WHERE id = $1 AND deleted_at IS NULL
 LIMIT 1
 `
@@ -212,6 +215,36 @@ func (q *Queries) GetUser(ctx context.Context, id int32) (User, error) {
 		&i.LastName,
 		&i.PhoneNumber,
 		&i.IsActive,
+		&i.IsVerified,
+		&i.Role,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+	)
+	return i, err
+}
+
+const getUserByEmail = `-- name: GetUserByEmail :one
+SELECT id, username, email, password, first_name, last_name, phone_number, is_active, is_verified, role, created_at, updated_at, deleted_at FROM users 
+WHERE email = $1 
+  AND is_verified = true 
+  AND deleted_at IS NULL 
+LIMIT 1
+`
+
+func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error) {
+	row := q.db.QueryRow(ctx, getUserByEmail, email)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Email,
+		&i.Password,
+		&i.FirstName,
+		&i.LastName,
+		&i.PhoneNumber,
+		&i.IsActive,
+		&i.IsVerified,
 		&i.Role,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -316,7 +349,7 @@ func (q *Queries) ListRoles(ctx context.Context) ([]Role, error) {
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT id, username, email, password, first_name, last_name, phone_number, is_active, role, created_at, updated_at, deleted_at FROM users
+SELECT id, username, email, password, first_name, last_name, phone_number, is_active, is_verified, role, created_at, updated_at, deleted_at FROM users
 WHERE deleted_at IS NULL
 ORDER BY username
 `
@@ -339,6 +372,7 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 			&i.LastName,
 			&i.PhoneNumber,
 			&i.IsActive,
+			&i.IsVerified,
 			&i.Role,
 			&i.CreatedAt,
 			&i.UpdatedAt,
@@ -449,10 +483,11 @@ SET username = $2,
     last_name = $6,
     phone_number = $7,
     is_active = $8,
-    role = $9,
+    is_verified = $9,
+    role = $10,
     updated_at = NOW()
 WHERE id = $1 AND deleted_at IS NULL
-RETURNING id, username, email, password, first_name, last_name, phone_number, is_active, role, created_at, updated_at, deleted_at
+RETURNING id, username, email, password, first_name, last_name, phone_number, is_active, is_verified, role, created_at, updated_at, deleted_at
 `
 
 type UpdateUserParams struct {
@@ -464,6 +499,7 @@ type UpdateUserParams struct {
 	LastName    pgtype.Text `json:"last_name"`
 	PhoneNumber pgtype.Text `json:"phone_number"`
 	IsActive    pgtype.Bool `json:"is_active"`
+	IsVerified  pgtype.Bool `json:"is_verified"`
 	Role        int64       `json:"role"`
 }
 
@@ -477,6 +513,7 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
 		arg.LastName,
 		arg.PhoneNumber,
 		arg.IsActive,
+		arg.IsVerified,
 		arg.Role,
 	)
 	return err

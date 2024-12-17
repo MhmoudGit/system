@@ -34,6 +34,7 @@ type User struct {
 	LastName    pgtype.Text      `json:"last_name"`
 	PhoneNumber pgtype.Text      `json:"phone_number"`
 	IsActive    pgtype.Bool      `json:"is_active"`
+	IsVerified  pgtype.Bool      `json:"is_verified"`
 	Role        int64            `json:"role"`
 	CreatedAt   pgtype.Timestamp `json:"created_at"`
 	UpdatedAt   pgtype.Timestamp `json:"updated_at"`

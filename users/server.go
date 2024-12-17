@@ -41,6 +41,16 @@ func NewServer() (*Server, error) {
 	}
 	logger.Info("database connection established")
 
+	repo := repository.New(conn)
+	err = CreatePermissionsSeed(repo)
+	if err != nil {
+		logger.Error("failed to create permissions seed: ", "error", err)
+	}
+	err = CreateSuperAdmin(repo)
+	if err != nil {
+		logger.Error("failed to create super admin: ", "error", err)
+	}
+
 	e := echo.New()
 	server := &Server{
 		Echo:       e,
@@ -131,28 +141,31 @@ func (s *Server) SetupRouter() {
 		Cfg:    s.Cfg,
 		Ctx:    s.Ctx,
 	}
+	
+	users.GET("/verify-email", auth.VerifyEmail)
+	users.POST("/register", auth.Register)
+	users.POST("/login", auth.Login)
+	users.POST("/forgot-password", auth.ForgotPassword)
+	users.POST("/refresh-token", auth.RefreshToken) // TODO: implement refresh token
+	users.GET("/logout", auth.Logout)               // TODO: implement logout
 
-	users.GET("/permissions", auth.GetAllPermissions)
-	users.POST("/permissions", auth.CreatePermissions)
-	users.DELETE("/permissions/:id", auth.DeletePermissions)
+	users.Use(JWTMiddleware(s.Cfg.JWTSecret))
+	users.GET("/permissions", auth.GetAllPermissions, Has("permissions:list"))
+	users.POST("/permissions", auth.CreatePermissions, Has("permissions:create"))
+	users.DELETE("/permissions/:id", auth.DeletePermissions, Has("permissions:delete"))
 
-	users.GET("/roles", auth.GetAllPermissions)
-	users.GET("/roles/:id", auth.GetAllPermissions)
-	users.POST("/roles", auth.GetAllPermissions)
+	users.GET("/roles", auth.GetAllRoles, Has("roles:list"))
+	users.GET("/roles/:id", auth.GetOneRole, Has("roles:read"))
+	users.POST("/roles", auth.CreateRoles, Has("roles:create"))
+	users.PUT("/roles/:id", auth.UpdateRoles, Has("roles:update"))
+	users.DELETE("/roles/:id", auth.DeleteRoles, Has("roles:delete"))
 
-	users.GET("/users", auth.GetAllPermissions)
-	users.GET("/users/:id", auth.GetAllPermissions)
-	users.POST("/users", auth.GetAllPermissions)
-	users.PUT("/users", auth.GetAllPermissions)
-	users.DELETE("/users", auth.GetAllPermissions)
+	users.GET("/users", auth.GetAllUsers, Has("users:list"))
+	users.GET("/users/:id", auth.GetOneUser, Has("users:read"))
+	users.POST("/users", auth.CreateUsers, Has("users:create"))
+	users.PUT("/users", auth.UpdateUsers, Has("users:update"))
+	users.DELETE("/users", auth.DeleteUsers, Has("users:delete"))
 
-	users.GET("/verify-email", auth.GetAllPermissions)
-	users.POST("/register", auth.GetAllPermissions)
-	users.POST("/login", auth.GetAllPermissions)
-	users.POST("/refresh-token", auth.GetAllPermissions)
-	users.POST("/forgot-password", auth.GetAllPermissions)
-	users.POST("/reset-password", auth.GetAllPermissions)
-	users.GET("/logout", auth.GetAllPermissions)
 }
 
 func Cors() middleware.CORSConfig {

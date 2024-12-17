@@ -7,7 +7,8 @@ CREATE TABLE users (
     first_name VARCHAR(50),                    -- Optional first name
     last_name VARCHAR(50),                     -- Optional last name
     phone_number VARCHAR(15),                  -- Optional phone number
-    is_active BOOLEAN DEFAULT TRUE,            -- Indicates if the account is active
+    is_active BOOLEAN DEFAULT FALSE,            -- Indicates if the account is active
+    is_verified BOOLEAN DEFAULT FALSE,        -- Indicates if the account is verified
     role BIGINT NOT NULL,            -- User role
     created_at TIMESTAMP DEFAULT NOW(),        -- Timestamp of when the user was created
     updated_at TIMESTAMP DEFAULT NOW(),        -- Timestamp of the last update

@@ -3,6 +3,13 @@ SELECT * FROM users
 WHERE id = $1 AND deleted_at IS NULL
 LIMIT 1;
 
+-- name: GetUserByEmail :one
+SELECT * FROM users 
+WHERE email = $1 
+  AND is_verified = true 
+  AND deleted_at IS NULL 
+LIMIT 1; 
+
 -- name: ListUsers :many
 SELECT * FROM users
 WHERE deleted_at IS NULL
@@ -10,9 +17,9 @@ ORDER BY username;
 
 -- name: CreateUser :one
 INSERT INTO users (
-  username, email, password, first_name, last_name, phone_number, is_active, role
+  username, email, password, first_name, last_name, phone_number, is_active, is_verified, role
 ) VALUES (
-  $1, $2, $3, $4, $5, $6, $7, $8
+  $1, $2, $3, $4, $5, $6, $7, $8, $9
 )
 RETURNING *;
 
@@ -25,7 +32,8 @@ SET username = $2,
     last_name = $6,
     phone_number = $7,
     is_active = $8,
-    role = $9,
+    is_verified = $9,
+    role = $10,
     updated_at = NOW()
 WHERE id = $1 AND deleted_at IS NULL
 RETURNING *;
