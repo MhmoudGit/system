@@ -18,6 +18,18 @@ services:
     networks:
       - backend
 
+  # add migrations service
+  migrations:
+    build:
+      context: ./users/sql/migrations
+      dockerfile: Dockerfile
+    container_name: migrations
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend
+
   # Users Golang Service
   users_service:
     build:
@@ -28,6 +40,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
     ports:
       - "8000:8000"
     networks:
