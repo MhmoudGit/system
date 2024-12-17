@@ -31,8 +31,8 @@ WHERE id = $1 AND deleted_at IS NULL
 `
 
 type AddPermissionToRoleParams struct {
-	ID          int32
-	ArrayAppend interface{}
+	ID          int32       `json:"id"`
+	ArrayAppend interface{} `json:"array_append"`
 }
 
 func (q *Queries) AddPermissionToRole(ctx context.Context, arg AddPermissionToRoleParams) error {
@@ -72,8 +72,8 @@ RETURNING id, role_name, permissions, created_at, updated_at, deleted_at
 `
 
 type CreateRoleParams struct {
-	RoleName    string
-	Permissions []string
+	RoleName    string   `json:"role_name"`
+	Permissions []string `json:"permissions"`
 }
 
 func (q *Queries) CreateRole(ctx context.Context, arg CreateRoleParams) (Role, error) {
@@ -100,14 +100,14 @@ RETURNING id, username, email, password, first_name, last_name, phone_number, is
 `
 
 type CreateUserParams struct {
-	Username    string
-	Email       string
-	Password    string
-	FirstName   pgtype.Text
-	LastName    pgtype.Text
-	PhoneNumber pgtype.Text
-	IsActive    pgtype.Bool
-	Role        int64
+	Username    string      `json:"username"`
+	Email       string      `json:"email"`
+	Password    string      `json:"password"`
+	FirstName   pgtype.Text `json:"first_name"`
+	LastName    pgtype.Text `json:"last_name"`
+	PhoneNumber pgtype.Text `json:"phone_number"`
+	IsActive    pgtype.Bool `json:"is_active"`
+	Role        int64       `json:"role"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
@@ -362,8 +362,8 @@ WHERE id = $1 AND deleted_at IS NULL
 `
 
 type RemovePermissionFromRoleParams struct {
-	ID          int32
-	ArrayRemove interface{}
+	ID          int32       `json:"id"`
+	ArrayRemove interface{} `json:"array_remove"`
 }
 
 func (q *Queries) RemovePermissionFromRole(ctx context.Context, arg RemovePermissionFromRoleParams) error {
@@ -412,8 +412,8 @@ WHERE id = $1 AND deleted_at IS NULL
 `
 
 type UpdatePermissionParams struct {
-	ID   int32
-	Name string
+	ID   int32  `json:"id"`
+	Name string `json:"name"`
 }
 
 func (q *Queries) UpdatePermission(ctx context.Context, arg UpdatePermissionParams) error {
@@ -430,9 +430,9 @@ WHERE id = $1 AND deleted_at IS NULL
 `
 
 type UpdateRoleParams struct {
-	ID          int32
-	RoleName    string
-	Permissions []string
+	ID          int32    `json:"id"`
+	RoleName    string   `json:"role_name"`
+	Permissions []string `json:"permissions"`
 }
 
 func (q *Queries) UpdateRole(ctx context.Context, arg UpdateRoleParams) error {
@@ -456,15 +456,15 @@ RETURNING id, username, email, password, first_name, last_name, phone_number, is
 `
 
 type UpdateUserParams struct {
-	ID          int32
-	Username    string
-	Email       string
-	Password    string
-	FirstName   pgtype.Text
-	LastName    pgtype.Text
-	PhoneNumber pgtype.Text
-	IsActive    pgtype.Bool
-	Role        int64
+	ID          int32       `json:"id"`
+	Username    string      `json:"username"`
+	Email       string      `json:"email"`
+	Password    string      `json:"password"`
+	FirstName   pgtype.Text `json:"first_name"`
+	LastName    pgtype.Text `json:"last_name"`
+	PhoneNumber pgtype.Text `json:"phone_number"`
+	IsActive    pgtype.Bool `json:"is_active"`
+	Role        int64       `json:"role"`
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {

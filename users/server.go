@@ -131,7 +131,28 @@ func (s *Server) SetupRouter() {
 		Cfg:    s.Cfg,
 		Ctx:    s.Ctx,
 	}
-	users.POST("/permissions", auth.LoadPermissions)
+
+	users.GET("/permissions", auth.GetAllPermissions)
+	users.POST("/permissions", auth.CreatePermissions)
+	users.DELETE("/permissions/:id", auth.DeletePermissions)
+
+	users.GET("/roles", auth.GetAllPermissions)
+	users.GET("/roles/:id", auth.GetAllPermissions)
+	users.POST("/roles", auth.GetAllPermissions)
+
+	users.GET("/users", auth.GetAllPermissions)
+	users.GET("/users/:id", auth.GetAllPermissions)
+	users.POST("/users", auth.GetAllPermissions)
+	users.PUT("/users", auth.GetAllPermissions)
+	users.DELETE("/users", auth.GetAllPermissions)
+
+	users.GET("/verify-email", auth.GetAllPermissions)
+	users.POST("/register", auth.GetAllPermissions)
+	users.POST("/login", auth.GetAllPermissions)
+	users.POST("/refresh-token", auth.GetAllPermissions)
+	users.POST("/forgot-password", auth.GetAllPermissions)
+	users.POST("/reset-password", auth.GetAllPermissions)
+	users.GET("/logout", auth.GetAllPermissions)
 }
 
 func Cors() middleware.CORSConfig {

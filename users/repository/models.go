@@ -9,33 +9,33 @@ import (
 )
 
 type Permission struct {
-	ID        int32
-	Name      string
-	CreatedAt pgtype.Timestamp
-	UpdatedAt pgtype.Timestamp
-	DeletedAt pgtype.Timestamp
+	ID        int32            `json:"id"`
+	Name      string           `json:"name"`
+	CreatedAt pgtype.Timestamp `json:"created_at"`
+	UpdatedAt pgtype.Timestamp `json:"updated_at"`
+	DeletedAt pgtype.Timestamp `json:"deleted_at"`
 }
 
 type Role struct {
-	ID          int32
-	RoleName    string
-	Permissions []string
-	CreatedAt   pgtype.Timestamp
-	UpdatedAt   pgtype.Timestamp
-	DeletedAt   pgtype.Timestamp
+	ID          int32            `json:"id"`
+	RoleName    string           `json:"role_name"`
+	Permissions []string         `json:"permissions"`
+	CreatedAt   pgtype.Timestamp `json:"created_at"`
+	UpdatedAt   pgtype.Timestamp `json:"updated_at"`
+	DeletedAt   pgtype.Timestamp `json:"deleted_at"`
 }
 
 type User struct {
-	ID          int32
-	Username    string
-	Email       string
-	Password    string
-	FirstName   pgtype.Text
-	LastName    pgtype.Text
-	PhoneNumber pgtype.Text
-	IsActive    pgtype.Bool
-	Role        int64
-	CreatedAt   pgtype.Timestamp
-	UpdatedAt   pgtype.Timestamp
-	DeletedAt   pgtype.Timestamp
+	ID          int32            `json:"id"`
+	Username    string           `json:"username"`
+	Email       string           `json:"email"`
+	Password    string           `json:"password"`
+	FirstName   pgtype.Text      `json:"first_name"`
+	LastName    pgtype.Text      `json:"last_name"`
+	PhoneNumber pgtype.Text      `json:"phone_number"`
+	IsActive    pgtype.Bool      `json:"is_active"`
+	Role        int64            `json:"role"`
+	CreatedAt   pgtype.Timestamp `json:"created_at"`
+	UpdatedAt   pgtype.Timestamp `json:"updated_at"`
+	DeletedAt   pgtype.Timestamp `json:"deleted_at"`
 }

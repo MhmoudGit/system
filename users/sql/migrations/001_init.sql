@@ -1,3 +1,4 @@
+-- +goose Up
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,                     -- Unique identifier for the user
     username VARCHAR(50) UNIQUE NOT NULL,      -- Username, must be unique
@@ -30,3 +31,6 @@ CREATE TABLE permissions (
     updated_at TIMESTAMP DEFAULT NOW(),        -- Timestamp of the last update
     deleted_at TIMESTAMP DEFAULT NULL          -- Timestamp for soft deletion
 );
+
+-- CMD goose postgres "postgres://postgres:postgres@postgres:5432/auth" status -dir ./sql/migrations
+-- CMD goose postgres "postgres://postgres:postgres@localhost:5432/auth" up -dir ./sql/migrations
