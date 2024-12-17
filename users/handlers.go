@@ -138,7 +138,9 @@ func (h *AuthHandler) CreateRoles(c echo.Context) error {
 }
 
 func (h *AuthHandler) UpdateRoles(c echo.Context) error {
+	id, _ := strconv.Atoi(c.Param("id"))
 	data := new(repository.UpdateRoleParams)
+	data.ID = int32(id)
 	err := c.Bind(data)
 	if err != nil {
 		return NewResponse(c, "failed", nil, err.Error(), http.StatusBadRequest)
@@ -265,7 +267,9 @@ func (h *AuthHandler) CreateUsers(c echo.Context) error {
 }
 
 func (h *AuthHandler) UpdateUsers(c echo.Context) error {
+	id, _ := strconv.Atoi(c.Param("id"))
 	data := new(repository.UpdateUserParams)
+	data.ID = int32(id)
 	err := c.Bind(data)
 	if err != nil {
 		return NewResponse(c, "failed", nil, err.Error(), http.StatusBadRequest)
