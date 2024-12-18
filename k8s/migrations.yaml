@@ -1,0 +1,12 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: migrations
+spec:
+  template:
+    spec:
+      containers:
+        - name: migrations
+          image: microservices-migrations:latest # You'll need to specify the correct image
+          imagePullPolicy: Never # For local images
+      restartPolicy: OnFailure

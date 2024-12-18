@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: users-service
+spec:
+  selector:
+    app: users-service
+  ports:
+    - port: 8000
+      targetPort: 8000
+  type: LoadBalancer # or NodePort, depending on your needs
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: users-service
+  template:
+    metadata:
+      labels:
+        app: users-service
+    spec:
+      containers:
+        - name: users-service
+          image: microservices-users_service:latest # You'll need to specify the correct image
+          imagePullPolicy: Never # For local images
+          ports:
+            - containerPort: 8000
